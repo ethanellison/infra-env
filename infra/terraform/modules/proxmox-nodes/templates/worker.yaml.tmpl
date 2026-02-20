@@ -1,0 +1,14 @@
+machine:
+  network:
+    interfaces:
+      - interface: eth0
+        addresses:
+          - ${ip}/24
+        routes:
+          - network: 0.0.0.0/0
+            gateway: ${gateway}
+        dhcp: false
+  time:
+    servers:
+      - 0.pool.ntp.org
+      - 1.pool.ntp.org

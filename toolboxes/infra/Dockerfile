@@ -1,24 +1,14 @@
-FROM fedora:latest
+FROM localhost/toolbox-base:latest
 
 RUN dnf install -y \
-    kubectl \
+    # rust-nu \
+    kubernetes-client \
     helm \
     kustomize \
-    jq \
-    yq \
-    git \
-    nushell \
-    bash-completion \
     iproute \
     iputils \
     bind-utils \
     net-tools \
-    openssh-clients \
-    curl \
-    wget \
-    vim \
-    tmux \
-    htop \
     && dnf clean all
 
 RUN echo "source <(kubectl completion bash)" >> /etc/bashrc

@@ -1,22 +1,13 @@
-FROM fedora:latest
+FROM localhost/toolbox-base:latest
 
 RUN dnf install -y \
     python3 \
     python3-pip \
-    python3-venv \
+    uv \
     golang \
     nodejs \
     npm \
-    git \
-    nushell \
-    curl \
-    wget \
-    vim \
-    nano \
-    tmux \
-    htop \
-    ca-certificates \
-    build-essential \
+    yarn \
     && dnf clean all
 
 WORKDIR /workspace

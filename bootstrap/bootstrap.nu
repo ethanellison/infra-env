@@ -5,12 +5,12 @@ const REPO_DIR = ($env.HOME | path join ".infra-env")
 const TOOLBOXES_DIR = ($REPO_DIR | path join "toolboxes")
 
 def die [message: string] {
-    print -e $"ERROR: ($message)"
+    print $"ERROR: ($message)"
     exit 1
 }
 
 def build_toolbox [name: string] {
-    let dockerfile = ($TOOLBOXES_DIR | path join $name "Dockerfile")
+    let dockerfile = ($TOOLBOXES_DIR | path join $name | path join "Dockerfile")
     
     if not ($dockerfile | path exists) {
         die $"Dockerfile not found for toolbox '($name)' at ($dockerfile)"
@@ -18,11 +18,7 @@ def build_toolbox [name: string] {
     
     print $"Building toolbox image: ($name)"
     
-    podman build \
-        --file $dockerfile \
-        --tag $"localhost/toolbox-($name):latest" \
-        ($TOOLBOXES_DIR | path join $name) \
-        | tee /dev/null
+    (podman build --file $dockerfile --tag $"localhost/toolbox-($name):latest" ($TOOLBOXES_DIR | path join $name))
     
     if $env.LAST_EXIT_CODE != 0 {
         die $"Failed to build toolbox image for '($name)'"
@@ -30,8 +26,8 @@ def build_toolbox [name: string] {
 }
 
 def toolbox_exists [name: string] -> bool {
-    let toolbox_list = (toolbox list --raw 2>/dev/null | lines)
-    $toolbox_list | any { $in == $name }
+    let toolbox_list = (toolbox list 2>| complete | get stdout | lines)
+    $toolbox_list | any { |x| $x == $name }
 }
 
 def create_toolbox [name: string] {
@@ -42,10 +38,7 @@ def create_toolbox [name: string] {
     
     print $"Creating toolbox: ($name)"
     
-    toolbox create \
-        --container-name $name \
-        --image $"localhost/toolbox-($name):latest" \
-    | tee /dev/null
+    (toolbox create --image $"localhost/toolbox-($name):latest" $name)
     
     if $env.LAST_EXIT_CODE != 0 {
         die $"Failed to create toolbox '($name)'"
@@ -59,8 +52,8 @@ def main [] {
     for toolbox in $TOOLBOXES {
         try {
             build_toolbox $toolbox
-        } catch {
-            die $"Toolbox build failed: ($in)"
+        } catch { |err|
+            die $"Toolbox build failed: ($err.msg)"
         }
     }
     print ""
@@ -68,8 +61,8 @@ def main [] {
     for toolbox in $TOOLBOXES {
         try {
             create_toolbox $toolbox
-        } catch {
-            die $"Toolbox creation failed: ($in)"
+        } catch { |err|
+            die $"Toolbox creation failed: ($err.msg)"
         }
     }
     print ""

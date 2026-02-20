@@ -1,0 +1,27 @@
+# Minimal Kube-burner configuration to deploy 10 pods to test connectivity
+# This is a simple smoke test to verify Kube-burner can connect to the cluster
+---
+global:
+  runner: pod
+  gc: true
+  gc-metrics: false
+  indexers: []
+
+teardown: true
+
+jobs:
+  - name: connectivity-test
+    jobType: create
+    namespace: kube-burner-test
+    # Create a simple deployment with 10 replicas
+    jobIterations: 1
+    qps: 2
+    burst: 2
+    namespacedIterations: false
+    cleanup: true
+    objects:
+      - objectTemplate: templates/simple-deployment.yaml
+        replicas: 10
+        inputVars:
+          image: busybox
+          command: ["/bin/sh", "-c", "sleep 3600"]

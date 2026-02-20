@@ -1,9 +1,7 @@
-FROM fedora:latest
+FROM localhost/toolbox-base:latest
 
 RUN dnf install -y \
-    vim \
     less \
-    nushell \
     curl \
     ca-certificates \
     && dnf clean all

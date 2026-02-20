@@ -10,8 +10,18 @@ The system treats all environments as **cattle, not pets**: containers are built
 
 ## Architecture
 
-- **Phase 0 (bootstrap.sh)**: System preparation - installs podman, toolbox, nushell, and required dependencies via rpm-ostree
-- **Phase 1 (bootstrap.nu)**: Environment orchestration - builds toolbox images and creates containers idempotently
+```
+infra-env/
+├── bootstrap/              # Phase 0: Host preparation
+├── toolboxes/              # Container-based dev environments
+├── scripts/                # Nushell automation (replaces Makefile)
+├── infra/                  # Infrastructure as Code
+│   ├── talos/             # Provider-agnostic Talos configs
+│   ├── terraform/          # Terraform modules + environments
+│   └── packer/             # Packer VM templates
+├── testing/                # Cluster benchmarks
+└── config/                # Shared configuration
+```
 
 ## Quick Start
 
@@ -24,13 +34,32 @@ cd infra-env
 ./bootstrap/bootstrap.sh
 ```
 
-## Toolboxes
+## Toolbox Operations
+
+```nushell
+# Build toolbox images
+nu scripts/toolbox.nu build
+
+# Create toolbox containers
+nu scripts/toolbox.nu create
+
+# Enter a toolbox
+nu scripts/toolbox.nu enter infra
+```
+
+### Available Toolboxes
+
+| Toolbox | Purpose |
+|---------|---------|
+| `dev` | General-purpose development |
+| `cka` | CKA/CKAD exam preparation |
+| `infra` | Infrastructure operations |
 
 ### dev - Development
 General-purpose scripting and glue code.
 
 ```bash
-make enter-dev
+nu scripts/toolbox.nu enter dev
 ```
 
 Includes: Python, Go, Node.js, git, nushell, build tools
@@ -39,7 +68,7 @@ Includes: Python, Go, Node.js, git, nushell, build tools
 Kubernetes certification preparation environment.
 
 ```bash
-make enter-cka
+nu scripts/toolbox.nu enter cka
 ```
 
 Intentional minimalism:
@@ -52,20 +81,32 @@ Intentional minimalism:
 Daily infrastructure and operations work.
 
 ```bash
-make enter-infra
+nu scripts/toolbox.nu enter infra
 ```
 
 Includes: kubectl, helm, kustomize, jq, yq, git, nushell, networking tools
 
-## Makefile Targets
+## Infrastructure Operations
 
-```bash
-make help              # Display all targets
-make build-toolboxes  # Build container images
-make create-toolboxes # Create toolboxes (idempotent)
-make enter-infra      # Enter infra toolbox
-make enter-cka        # Enter cka toolbox
-make enter-dev        # Enter dev toolbox
+```nushell
+# Terraform operations
+nu scripts/infra.nu init staging
+nu scripts/infra.nu plan prod
+nu scripts/infra.nu apply staging
+nu scripts/infra.nu get-configs prod
+
+# Build Packer template
+nu scripts/infra.nu build-template
+```
+
+## Cluster Management
+
+```nushell
+# Deploy cluster
+nu scripts/cluster.nu deploy staging
+
+# Check status
+nu scripts/cluster.nu status prod
 ```
 
 ## Cattle Mindset
@@ -91,7 +132,17 @@ make enter-dev
 - **Container Runtime**: podman
 - **Toolbox Management**: toolbox (RHEL/Fedora feature)
 - **Orchestration**: Nushell
-- **All tools**: Non-interactive installation via dnf or binary download
+- **Kubernetes**: Talos Linux (immutable, API-driven)
+- **IaC**: Terraform (provider-agnostic architecture)
+
+## Provider-Agnostic Architecture
+
+Talos configurations are provider-agnostic:
+- Base configs in `infra/talos/base/`
+- Provider patches in `infra/talos/patches/providers/`
+- Terraform modules: `talos-cluster` (config) + `{provider}-nodes` (infrastructure)
+
+This enables the same Talos configs to work across HCloud, Proxmox, AWS, GCP with minimal changes.
 
 ## Design Principles
 

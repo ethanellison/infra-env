@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-deployment-{{.Replica}}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kube-burner-test
+      instance: test-deployment-{{.Replica}}
+  template:
+    metadata:
+      labels:
+        app: kube-burner-test
+        instance: test-deployment-{{.Replica}}
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: test-container
+        image: {{.image}}
+        command: {{.command}}
+        resources:
+          requests:
+            memory: "10Mi"
+            cpu: "10m"
+          limits:
+            memory: "20Mi"
+            cpu: "20m"

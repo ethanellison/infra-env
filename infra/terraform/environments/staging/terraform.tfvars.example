@@ -1,0 +1,16 @@
+# Copy this file to terraform.tfvars and fill in your values
+
+# Required: Hetzner Cloud API token
+# hcloud_token = "your-token-here"
+
+# Optional: Override defaults
+# cluster_name    = "talos-staging"
+# talos_version   = "v1.12.2"
+# hcloud_location = "fsn1"
+# cp_server_type  = "cx31"
+
+# Worker configuration (map format)
+# workers = {
+#   "worker-1" = { server_type = "cx21", location = "fsn1" }
+#   "worker-2" = { server_type = "cx21", location = "fsn1" }
+# }

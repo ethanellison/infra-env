@@ -1,0 +1,13 @@
+talos_version    = "v1.12.2"
+kubernetes_version = "1.35.0"
+
+# Hetzner
+hcloud_token = "your-token-here"
+
+# Proxmox (optional for staging)
+proxmox_endpoint = "https://proxmox.example.com:8006"
+proxmox_username = "packer@pam"
+proxmox_password = "your-password"
+proxmox_node     = "pve"
+proxmox_storage  = "local"
+

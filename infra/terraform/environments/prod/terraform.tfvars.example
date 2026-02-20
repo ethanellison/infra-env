@@ -1,0 +1,29 @@
+# Copy this file to terraform.tfvars and fill in your values
+
+# Required: Proxmox settings
+# proxmox_node     = "pve01"
+# proxmox_storage  = "local-fast"
+# proxmox_endpoint = "https://192.168.0.51:8006/"
+# proxmox_username = "root@pam"
+# proxmox_password = "your-password"
+
+# Required: Static IP configuration
+# Control plane IPs (1 for single CP setup)
+# control_plane_ips = ["192.168.0.61"]
+
+# Worker IPs (3 workers)
+# worker_ips = ["192.168.0.62", "192.168.0.63", "192.168.0.64"]
+
+# Network gateway
+# gateway = "192.168.0.1"
+
+# Optional: Override defaults
+# cluster_name   = "k8s-homelab-prod"
+# talos_version  = "v1.12.2"
+# cp_memory      = 4096
+# cp_cores       = 4
+# worker_memory  = 2048
+# worker_cores   = 2
+# disk_size      = 50
+# network_bridge = "vmbr0"
+# nameservers    = ["192.168.0.21"]
